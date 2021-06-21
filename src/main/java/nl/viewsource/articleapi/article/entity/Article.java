@@ -2,7 +2,7 @@ package nl.viewsource.articleapi.article.entity;
 
 import java.util.*;
 
-public class Article {
+public final class Article {
     public final String id;
     public final String hash;
     public final String title;

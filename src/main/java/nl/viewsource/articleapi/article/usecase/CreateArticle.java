@@ -6,6 +6,8 @@ import nl.viewsource.articleapi.article.entity.ArticleValidator;
 import nl.viewsource.articleapi.article.usecase.port.ArticleRepository;
 import nl.viewsource.articleapi.article.usecase.port.IdGenerator;
 
+import java.util.Optional;
+
 public final class CreateArticle {
     private final ArticleRepository repository;
     private final IdGenerator idGenerator;
@@ -25,5 +27,18 @@ public final class CreateArticle {
         articleValidator.validate(articleToSave);
 
         return repository.create(articleToSave);
+    }
+
+    public Optional<Article> update(String articleId, final Article article) throws ArticleValidationException {
+        var optionalArticle = repository.findById(articleId);
+
+        if (optionalArticle.isEmpty()) { return optionalArticle; }
+
+        var existingArticle = optionalArticle.get();
+        var articleToSave = Article.builder(article).id(articleId).build();
+
+        articleValidator.validate(articleToSave);
+
+        return Optional.of(repository.create(articleToSave));
     }
 }

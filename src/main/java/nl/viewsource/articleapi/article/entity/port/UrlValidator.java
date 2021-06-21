@@ -1,5 +1,5 @@
 package nl.viewsource.articleapi.article.entity.port;
 
 public interface UrlValidator {
-    public boolean isValid(String id);
+    public boolean isValid(String url);
 }
