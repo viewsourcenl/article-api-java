@@ -1,5 +1,7 @@
 package nl.viewsource.articleapi;
 
+import com.fasterxml.uuid.Jug;
+import nl.viewsource.articleapi.adapter.id.JugIdGenerator;
 import nl.viewsource.articleapi.adapter.id.UuidGenerator;
 import nl.viewsource.articleapi.adapter.repository.MapBasedArticleRepository;
 import nl.viewsource.articleapi.adapter.url.URLValidator;
@@ -20,9 +22,10 @@ public class App extends Application {
 
     public static class Config {
         private final UuidGenerator uuidGenerator = new UuidGenerator();
+        private final JugIdGenerator jugIdGenerator = new JugIdGenerator();
         private final URLValidator urlValidator = new URLValidator();
         private final ArticleValidatorFactory articleValidatorFactory = new ArticleValidatorFactory(uuidGenerator, urlValidator);
-        private final ArticleUsecaseFactory articleUsecaseFactory = new ArticleUsecaseFactory(repository, articleValidatorFactory.articleValidator(), uuidGenerator);
+        private final ArticleUsecaseFactory articleUsecaseFactory = new ArticleUsecaseFactory(repository, articleValidatorFactory.articleValidator(), jugIdGenerator);
         private final ArticleController articleController = new ArticleController(articleUsecaseFactory.createArticle(), articleUsecaseFactory.findArticle());
 
         public ArticleUsecaseFactory getArticleUsecaseFactory() {
