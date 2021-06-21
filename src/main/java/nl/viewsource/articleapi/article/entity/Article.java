@@ -1,18 +1,8 @@
 package nl.viewsource.articleapi.article.entity;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
 public class Article {
-   private static class Id {
-       static String generate() {
-           return "myId";
-       }
-       static boolean isValid(String id) {
-           return "myId".equals(id);
-       }
-   }
-
     public final String id;
     public final String hash;
     public final String title;
