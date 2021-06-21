@@ -1,7 +1,6 @@
-package nl.viewsource.articleapi.domain.entity;
+package nl.viewsource.articleapi.article.entity;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 public class Article {
@@ -38,6 +37,10 @@ public class Article {
         return new Builder();
     }
 
+    public static Builder builder(Article article) {
+        return new Builder(article);
+    }
+
     public static class Builder {
         private String id;
         private String hash;
@@ -47,6 +50,18 @@ public class Article {
         private String link;
         private String image;
         private Date date;
+
+        private Builder() {}
+        private Builder(Article article) {
+            this.id = article.id;
+            this.hash = article.hash;
+            this.title = article.title;
+            this.description = article.description;
+            this.tags = article.tags;
+            this.link = article.link;
+            this.image = article.image;
+            this.date = article.date;
+        }
 
         public Builder id (String id){
             this.id = id;
@@ -81,6 +96,14 @@ public class Article {
             return this;
         }
         public Article build () {
+            if (tags == null) {
+                tags = Collections.emptyList();
+            } else {
+                tags = Collections.unmodifiableList(tags);
+            }
+
+            // TODO compute hash
+
             return new Article(this);
         }
     }

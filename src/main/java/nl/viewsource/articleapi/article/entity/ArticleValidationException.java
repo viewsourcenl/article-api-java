@@ -1,4 +1,4 @@
-package nl.viewsource.articleapi.usecase.exception;
+package nl.viewsource.articleapi.article.entity;
 
 public class ArticleValidationException extends Exception {
 

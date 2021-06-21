@@ -1,25 +1,20 @@
-package nl.viewsource.articleapi.usecase.validator;
+package nl.viewsource.articleapi.article.entity;
 
-import nl.viewsource.articleapi.domain.entity.Article;
-import nl.viewsource.articleapi.usecase.exception.*;
-import nl.viewsource.articleapi.usecase.port.*;
+import nl.viewsource.articleapi.article.entity.port.IdValidator;
+import nl.viewsource.articleapi.article.entity.port.UrlValidator;
 
-import javax.validation.constraints.NotNull;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-public class ArticleValidatorImpl implements nl.viewsource.articleapi.usecase.port.ArticleValidator {
+class ArticleValidatorImpl implements ArticleValidator {
     private final UrlValidator urlValidator;
-    private final IdGenerator idGenerator;
+    private final IdValidator idValidator;
 
-    public ArticleValidatorImpl(final IdGenerator idGenerator, final UrlValidator urlValidator) {
-        this.idGenerator = idGenerator;
+    public ArticleValidatorImpl(final IdValidator idValidator, final UrlValidator urlValidator) {
+        this.idValidator = idValidator;
         this.urlValidator = urlValidator;
     }
 
     @Override
     public void validate(Article article) throws ArticleValidationException {
-        if (!this.idGenerator.isValid(article.id)) {
+        if (!this.idValidator.isValid(article.id)) {
             throw new ArticleValidationException("Article must have a valid id");
         }
         if (article.title == null) {
