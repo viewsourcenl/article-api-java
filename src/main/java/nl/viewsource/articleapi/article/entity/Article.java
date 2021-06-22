@@ -24,6 +24,19 @@ public final class Article {
     }
 
     @Override
+    public String toString() {
+        return "["
+                + "id: " + id
+                + ", title: " + title
+                + ", description: " + description
+                + ", tags: " + tags
+                + ", link: " + link
+                + ", image: " + image
+                + ", date: " + date
+                + "]";
+    }
+
+    @Override
     public boolean equals(Object that) {
         if (this == that) return true;
         if (that == null) return false;
