@@ -1,6 +1,5 @@
 package nl.viewsource.articleapi;
 
-import com.fasterxml.uuid.Jug;
 import nl.viewsource.articleapi.adapter.id.JugIdGenerator;
 import nl.viewsource.articleapi.adapter.id.UuidGenerator;
 import nl.viewsource.articleapi.adapter.repository.MapBasedArticleRepository;
@@ -11,6 +10,7 @@ import nl.viewsource.articleapi.article.usecase.port.ArticleRepository;
 import nl.viewsource.articleapi.controller.ArticleController;
 import nl.viewsource.articleapi.resources.ArticleResource;
 import nl.viewsource.articleapi.resources.ArticlesResource;
+import nl.viewsource.articleapi.resources.ArticleTagsResource;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -25,8 +25,17 @@ public class App extends Application {
         private final JugIdGenerator jugIdGenerator = new JugIdGenerator();
         private final URLValidator urlValidator = new URLValidator();
         private final ArticleValidatorFactory articleValidatorFactory = new ArticleValidatorFactory(uuidGenerator, urlValidator);
-        private final ArticleUsecaseFactory articleUsecaseFactory = new ArticleUsecaseFactory(repository, articleValidatorFactory.articleValidator(), jugIdGenerator);
-        private final ArticleController articleController = new ArticleController(articleUsecaseFactory.createArticle(), articleUsecaseFactory.findArticle());
+        private final ArticleUsecaseFactory articleUsecaseFactory = new ArticleUsecaseFactory(
+                repository,
+                articleValidatorFactory.articleValidator(),
+                jugIdGenerator
+        );
+
+        private final ArticleController articleController = new ArticleController(
+                articleUsecaseFactory.createArticle(),
+                articleUsecaseFactory.findArticle(),
+                articleUsecaseFactory.updateTags()
+        );
 
         public ArticleUsecaseFactory getArticleUsecaseFactory() {
             return articleUsecaseFactory;
@@ -46,6 +55,7 @@ public class App extends Application {
 
         router.attach("/articles", ArticlesResource.class);
         router.attach("/articles/{articleId}", ArticleResource.class);
+        router.attach("/articles/{articleId}/tags", ArticleTagsResource.class);
 
         return router;
     }
