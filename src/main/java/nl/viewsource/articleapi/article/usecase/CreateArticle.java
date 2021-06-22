@@ -34,6 +34,6 @@ public record CreateArticle(ArticleRepository repository,
 
         articleValidator.validate(articleToSave);
 
-        return Optional.of(repository.create(articleToSave));
+        return Optional.of(repository.replace(articleToSave));
     }
 }
