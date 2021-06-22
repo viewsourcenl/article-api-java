@@ -8,16 +8,9 @@ import nl.viewsource.articleapi.article.usecase.port.IdGenerator;
 
 import java.util.Optional;
 
-public final class CreateArticle {
-    private final ArticleRepository repository;
-    private final IdGenerator idGenerator;
-    private final ArticleValidator articleValidator;
-
-    public CreateArticle(final ArticleRepository repository, final IdGenerator idGenerator, final ArticleValidator articleValidator) {
-        this.repository = repository;
-        this.idGenerator = idGenerator;
-        this.articleValidator = articleValidator;
-    }
+public record CreateArticle(ArticleRepository repository,
+                            IdGenerator idGenerator,
+                            ArticleValidator articleValidator) {
 
     public Article create(final Article article) throws ArticleValidationException {
         var articleToSave = Article.builder(article)
@@ -32,7 +25,9 @@ public final class CreateArticle {
     public Optional<Article> update(String articleId, final Article article) throws ArticleValidationException {
         var optionalArticle = repository.findById(articleId);
 
-        if (optionalArticle.isEmpty()) { return optionalArticle; }
+        if (optionalArticle.isEmpty()) {
+            return optionalArticle;
+        }
 
         var existingArticle = optionalArticle.get();
         var articleToSave = Article.builder(article).id(articleId).build();

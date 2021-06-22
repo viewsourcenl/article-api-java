@@ -6,12 +6,7 @@ import nl.viewsource.articleapi.article.usecase.port.ArticleRepository;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class UpdateTags {
-    private final ArticleRepository articleRepository;
-
-    public UpdateTags(final ArticleRepository articleRepository) {
-        this.articleRepository = articleRepository;
-    }
+public record UpdateTags(ArticleRepository articleRepository) {
 
     public Optional<Article> addTags(final String articleId, final List<String> tags) {
         return articleRepository
@@ -33,7 +28,7 @@ public final class UpdateTags {
                 .findById(articleId)
                 .map(article -> {
                     var newTags = article.tags.stream().filter(
-                           tag -> !tags.contains(tag)
+                            tag -> !tags.contains(tag)
                     ).collect(Collectors.toList());
 
                     return Article.builder(article).tags(newTags).build();
