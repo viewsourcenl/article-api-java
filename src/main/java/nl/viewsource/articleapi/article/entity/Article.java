@@ -23,6 +23,25 @@ public final class Article {
         this.date = builder.date;
     }
 
+    @Override
+    public boolean equals(Object that) {
+        if (this == that) return true;
+        if (that == null) return false;
+        if (this.getClass() != that.getClass()) return false;
+
+        Article article = (Article) that;
+
+        return Objects.equals(id, article.id)
+                && Objects.equals(title, article.title)
+                && Objects.equals(description, article.description)
+                && Objects.equals(tags, article.tags)
+                && Objects.equals(link, article.link)
+                && Objects.equals(image, article.image)
+                && Objects.equals(date, article.date)
+                ;
+
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -41,7 +60,9 @@ public final class Article {
         private String image;
         private Date date;
 
-        private Builder() {}
+        private Builder() {
+        }
+
         private Builder(Article article) {
             this.id = article.id;
             this.hash = article.hash;
@@ -53,39 +74,47 @@ public final class Article {
             this.date = article.date;
         }
 
-        public Builder id (String id){
+        public Builder id(String id) {
             this.id = id;
             return this;
         }
-        public Builder title (String title){
+
+        public Builder title(String title) {
             this.title = title;
             return this;
         }
-        public Builder description (String description){
+
+        public Builder description(String description) {
             this.description = description;
             return this;
         }
-        public Builder tags (List<String> tags){
+
+        public Builder tags(List<String> tags) {
             this.tags = tags;
             return this;
         }
-        public Builder tags (String... tags) {
+
+        public Builder tags(String... tags) {
             this.tags = List.of(tags);
             return this;
         }
-        public Builder link (String link){
+
+        public Builder link(String link) {
             this.link = link;
             return this;
         }
-        public Builder image (String image){
+
+        public Builder image(String image) {
             this.image = image;
             return this;
         }
-        public Builder date (Date date){
+
+        public Builder date(Date date) {
             this.date = date;
             return this;
         }
-        public Article build () {
+
+        public Article build() {
             if (tags == null) {
                 tags = Collections.emptyList();
             } else {
