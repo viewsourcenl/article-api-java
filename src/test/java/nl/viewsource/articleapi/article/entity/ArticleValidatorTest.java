@@ -3,9 +3,6 @@ package nl.viewsource.articleapi.article.entity;
 import nl.viewsource.articleapi.article.entity.port.IdValidator;
 import nl.viewsource.articleapi.article.entity.port.UrlValidator;
 import org.junit.jupiter.api.*;
-import org.mockito.Answers;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.util.Date;
 
@@ -27,14 +24,8 @@ public class ArticleValidatorTest {
 
     @BeforeEach
     void beforeEach() {
-        Answer isValid = new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return true;
-            }
-        };
-        idValidator = mock(IdValidator.class, isValid);
-        urlValidator = mock(UrlValidator.class, isValid);
+        idValidator = mock(IdValidator.class,   invocationOnMock -> true);
+        urlValidator = mock(UrlValidator.class, invocationOnMock -> true);
 
         articleValidator = new ArticleValidatorImpl(idValidator, urlValidator);
 
@@ -45,6 +36,19 @@ public class ArticleValidatorTest {
                 .image(image = "https://www.example.com/article/pic.png")
                 .date(date = new Date())
         ;
+    }
+
+    @Test
+    @DisplayName("must have a valid id")
+    void requiresId() {
+        var article = builder.id("blabla").build();
+        when(idValidator.isValid(article.id)).thenReturn(false);
+
+        Exception ex = assertThrows(
+                ArticleValidationException.class,
+                () -> articleValidator.validate(article)
+        );
+        assertEquals("Article must have a valid id", ex.getMessage());
     }
 
     @Test
@@ -144,6 +148,4 @@ public class ArticleValidatorTest {
         );
         assertEquals("Article must have a valid image url", ex.getMessage());
     }
-
-
 }

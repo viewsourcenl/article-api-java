@@ -41,8 +41,5 @@ class ArticleValidatorImpl implements ArticleValidator {
         if (article.date == null) {
             throw new ArticleValidationException("Article must have a date");
         }
-        if (article.tags == null) {
-            throw new ArticleValidationException("Article must have tags list");
-        }
     }
 }
