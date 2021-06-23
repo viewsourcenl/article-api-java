@@ -1,5 +1,6 @@
 package nl.viewsource.articleapi.article.entity;
 
+import nl.viewsource.articleapi.Fixtures;
 import org.junit.jupiter.api.*;
 
 import java.util.Collections;
@@ -10,23 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ArticleTest {
     Article.Builder builder;
+    Article fakeArticle;
 
-    String title;
-    String description;
-    String link;
-    String image;
-    Date date;
 
     @BeforeEach
     void beforeEach() {
-        builder = Article.builder()
-                .id("myId")
-                .title(title = "Something Something")
-                .description(description = "You won't believe what happened.")
-                .link(link = "https://www.example.com/article/123")
-                .image(image = "https://www.example.com/article/pic.png")
-                .date(date = new Date())
-        ;
+        fakeArticle  = Fixtures.fakeArticle();
+        builder = Article.builder(fakeArticle);
     }
 
 
@@ -37,11 +28,11 @@ public class ArticleTest {
                 builder.build()
         );
 
-        assertEquals(title, article.title);
-        assertEquals(description, article.description);
-        assertEquals(link, article.link);
-        assertEquals(image, article.image);
-        assertEquals(date, article.date);
+        assertEquals(fakeArticle.title, article.title);
+        assertEquals(fakeArticle.description, article.description);
+        assertEquals(fakeArticle.link, article.link);
+        assertEquals(fakeArticle.image, article.image);
+        assertEquals(fakeArticle.date, article.date);
     }
 
     @Test

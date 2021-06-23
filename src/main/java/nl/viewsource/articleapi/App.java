@@ -18,38 +18,11 @@ import org.restlet.data.Protocol;
 import org.restlet.routing.Router;
 
 public class App extends Application {
-    private static ArticleRepository repository = new MapBasedArticleRepository();
 
-    public static class Config {
-        private final UuidGenerator uuidGenerator = new UuidGenerator();
-        private final JugIdGenerator jugIdGenerator = new JugIdGenerator();
-        private final URLValidator urlValidator = new URLValidator();
-        private final ArticleValidatorFactory articleValidatorFactory = new ArticleValidatorFactory(uuidGenerator, urlValidator);
-        private final ArticleUsecaseFactory articleUsecaseFactory = new ArticleUsecaseFactory(
-                repository,
-                articleValidatorFactory.articleValidator(),
-                jugIdGenerator
-        );
-
-        private final ArticleController articleController = new ArticleController(
-                articleUsecaseFactory.createArticle(),
-                articleUsecaseFactory.findArticle(),
-                articleUsecaseFactory.updateTags()
-        );
-
-        public ArticleUsecaseFactory getArticleUsecaseFactory() {
-            return articleUsecaseFactory;
-        }
-
-        public ArticleController getArticleController() {
-            return this.articleController;
-        }
-
-    }
 
     @Override
     public Restlet createInboundRoot() {
-        var config = new Config();
+        var config = new AppConfigMemory();
         Router router = new Router(getContext());
         router.getContext().getAttributes().put("articleController", config.getArticleController());
 

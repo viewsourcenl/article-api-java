@@ -2,6 +2,9 @@ package nl.viewsource.articleapi.article.usecase;
 
 import static org.mockito.Mockito.*;
 
+import com.github.javafaker.Faker;
+import com.github.javafaker.service.FakeValuesService;
+import com.github.javafaker.service.RandomService;
 import nl.viewsource.articleapi.article.entity.Article;
 import nl.viewsource.articleapi.article.entity.ArticleValidationException;
 import nl.viewsource.articleapi.article.entity.ArticleValidator;
@@ -13,16 +16,21 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CreateArticleTest {
+    Faker faker = new Faker();
+
     ArticleRepository articleRepository;
     IdGenerator idGenerator;
     ArticleValidator articleValidator;
     CreateArticle createArticle;
     Article.Builder builder;
+
 
     @BeforeEach
     void beforeEach() {
@@ -31,11 +39,11 @@ class CreateArticleTest {
         articleValidator = mock(ArticleValidator.class);
         createArticle = new CreateArticle(articleRepository, idGenerator, articleValidator);
         builder = Article.builder()
-                .title("Something Something")
-                .description("You won't believe what happened.")
-                .link("https://www.example.com/article/123")
-                .image("https://www.example.com/article/pic.png")
-                .date(new Date());
+                .title(faker.lorem().sentence())
+                .description(faker.lorem().paragraph())
+                .link(faker.internet().url())
+                .image(faker.internet().image())
+                .date(faker.date().past(1000, TimeUnit.DAYS));
     }
 
     @Nested
