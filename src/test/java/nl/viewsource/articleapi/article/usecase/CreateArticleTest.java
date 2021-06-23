@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CreateArticleTest {
-    ArticleRepository repository;
+    ArticleRepository articleRepository;
     IdGenerator idGenerator;
     ArticleValidator articleValidator;
     CreateArticle createArticle;
@@ -26,10 +26,10 @@ class CreateArticleTest {
 
     @BeforeEach
     void beforeEach() {
-        repository = mock(ArticleRepository.class);
+        articleRepository = mock(ArticleRepository.class);
         idGenerator = mock(IdGenerator.class, invocationOnMock -> "TestId");
         articleValidator = mock(ArticleValidator.class);
-        createArticle = new CreateArticle(repository, idGenerator, articleValidator);
+        createArticle = new CreateArticle(articleRepository, idGenerator, articleValidator);
         builder = Article.builder()
                 .title("Something Something")
                 .description("You won't believe what happened.")
@@ -39,7 +39,39 @@ class CreateArticleTest {
     }
 
     @Nested
-    @DisplayName("creating an article")
+    @DisplayName("When creating an instance of the usecase")
+
+    class WhenCreateNewCreateArticle {
+        @Test()
+        @DisplayName("requires ArticleRepository")
+        void new_requiresArticleRepository() {
+            assertThrows(
+                    NullPointerException.class,
+                    () -> createArticle = new CreateArticle(null, idGenerator, articleValidator)
+            );
+        }
+
+        @Test()
+        @DisplayName("requires IdGenerator")
+        void new_requiresIdGenerator() {
+            assertThrows(
+                    NullPointerException.class,
+                    () -> createArticle = new CreateArticle(articleRepository, null, articleValidator)
+            );
+        }
+
+        @Test()
+        @DisplayName("requires ArticleValidator")
+        void new_requiresArticleValidator() {
+            assertThrows(
+                    NullPointerException.class,
+                    () -> createArticle = new CreateArticle(articleRepository, idGenerator, null)
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("When creating an article")
     class WhenCreating {
 
         @Test
@@ -49,11 +81,11 @@ class CreateArticleTest {
             var expectedResult = Article.builder(input).id("TestId").build();
             createArticle.create(input);
 
-            verify(repository).create(expectedResult);
+            verify(articleRepository).create(expectedResult);
         }
 
         @Test
-        @DisplayName("returns result of  repository")
+        @DisplayName("returns result of  articleRepository")
         void create_returnRepoResult() throws ArticleValidationException {
             var input = builder.build();
             var expectedResult = Article.builder()
@@ -63,7 +95,7 @@ class CreateArticleTest {
                     .date(new Date(0))
                     .build();
 
-            when(repository.create(any(Article.class))).thenReturn(expectedResult);
+            when(articleRepository.create(any(Article.class))).thenReturn(expectedResult);
 
             var result = createArticle.create(input);
 
@@ -86,17 +118,17 @@ class CreateArticleTest {
     }
 
     @Nested
-    @DisplayName("updating an article")
+    @DisplayName("When updating an article")
     class WhenUpdating {
         @Test
-        @DisplayName("Returns empty optional when article not found in repository")
+        @DisplayName("Returns empty optional when article not found in articleRepository")
         void update_empty_notFound() throws ArticleValidationException {
             Optional<Article> expectedResult = Optional.empty();
             var input = builder.build();
 
-            when(repository.findById("test_id")).thenReturn(Optional.empty());
+            when(articleRepository.findById("test_id")).thenReturn(Optional.empty());
 
-            var result =  createArticle.update("test_id", input);
+            var result = createArticle.update("test_id", input);
 
             assertEquals(expectedResult, result);
         }
@@ -107,7 +139,7 @@ class CreateArticleTest {
             var input = builder.build();
             var optionalArticle = Optional.of(builder.id("test_id").build());
 
-            when(repository.findById("test_id")).thenReturn(optionalArticle);
+            when(articleRepository.findById("test_id")).thenReturn(optionalArticle);
 
             doThrow(ArticleValidationException.class)
                     .when(articleValidator)
@@ -127,12 +159,12 @@ class CreateArticleTest {
             var optionalArticle = Optional.of(builder.id("test_id").title("other title").build());
             var updatedArticle = builder.id("test_id").title("updated_title").build();
 
-            when(repository.findById("test_id")).thenReturn(optionalArticle);
-            when(repository.replace(any(Article.class))).thenReturn(updatedArticle);
+            when(articleRepository.findById("test_id")).thenReturn(optionalArticle);
+            when(articleRepository.replace(any(Article.class))).thenReturn(updatedArticle);
 
             createArticle.update("test_id", updatedArticle);
 
-            verify(repository).replace(updatedArticle);
+            verify(articleRepository).replace(updatedArticle);
         }
 
         @Test
@@ -143,8 +175,8 @@ class CreateArticleTest {
             var updatedArticle = builder.id("test_id").build();
             var expectedResult = builder.title("expected_title").id("test_id").build();
 
-            when(repository.findById("test_id")).thenReturn(optionalArticle);
-            when(repository.replace(any(Article.class))).thenReturn(expectedResult);
+            when(articleRepository.findById("test_id")).thenReturn(optionalArticle);
+            when(articleRepository.replace(any(Article.class))).thenReturn(expectedResult);
 
             var result = createArticle.update("test_id", input);
 
