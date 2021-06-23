@@ -4,21 +4,22 @@ import nl.viewsource.articleapi.article.entity.ArticleValidator;
 import nl.viewsource.articleapi.article.usecase.port.ArticleRepository;
 import nl.viewsource.articleapi.article.usecase.port.IdGenerator;
 
-public class ArticleUsecaseFactory {
+import java.util.Objects;
 
-    private static ArticleUsecaseFactory instance;
-    private final ArticleRepository repository;
-    private final ArticleValidator articleValidator;
-    private final IdGenerator idGenerator;
+public record ArticleUsecaseFactory(ArticleRepository repository,
+                                    ArticleValidator articleValidator,
+                                    IdGenerator idGenerator) {
 
-    public ArticleUsecaseFactory(ArticleRepository repository, ArticleValidator articleValidator, IdGenerator idGenerator) {
-        this.repository = repository;
-        this.articleValidator = articleValidator;
-        this.idGenerator = idGenerator;
+    public ArticleUsecaseFactory {
+         Objects.requireNonNull(repository);
+         Objects.requireNonNull(articleValidator);
+         Objects.requireNonNull(idGenerator);
     }
 
+    private static ArticleUsecaseFactory instance;
+
     public CreateArticle createArticle() {
-            return new CreateArticle(this.repository, this.idGenerator, this.articleValidator);
+        return new CreateArticle(this.repository, this.idGenerator, this.articleValidator);
     }
 
     public FindArticle findArticle() {

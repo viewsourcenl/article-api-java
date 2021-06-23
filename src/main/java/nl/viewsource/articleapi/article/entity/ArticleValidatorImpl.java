@@ -3,13 +3,13 @@ package nl.viewsource.articleapi.article.entity;
 import nl.viewsource.articleapi.article.entity.port.IdValidator;
 import nl.viewsource.articleapi.article.entity.port.UrlValidator;
 
-class ArticleValidatorImpl implements ArticleValidator {
-    private final UrlValidator urlValidator;
-    private final IdValidator idValidator;
+import java.util.Objects;
 
-    public ArticleValidatorImpl(final IdValidator idValidator, final UrlValidator urlValidator) {
-        this.idValidator = idValidator;
-        this.urlValidator = urlValidator;
+record ArticleValidatorImpl(IdValidator idValidator, UrlValidator urlValidator) implements ArticleValidator {
+
+    public ArticleValidatorImpl {
+        Objects.requireNonNull(idValidator);
+        Objects.requireNonNull(urlValidator);
     }
 
     @Override

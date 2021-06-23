@@ -8,6 +8,10 @@ import java.util.stream.Collectors;
 
 public record UpdateTags(ArticleRepository articleRepository) {
 
+    public UpdateTags {
+        Objects.requireNonNull(articleRepository);
+    }
+
     public Optional<Article> addTags(final String articleId, final List<String> tags) {
         return articleRepository
                 .findById(articleId)

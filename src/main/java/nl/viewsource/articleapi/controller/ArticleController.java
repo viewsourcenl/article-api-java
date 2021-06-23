@@ -10,18 +10,18 @@ import nl.viewsource.articleapi.controller.model.ArticleWeb;
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ArticleController {
-    final CreateArticle createArticle;
-    final FindArticle findArticle;
-    final UpdateTags updateTags;
+public record ArticleController(CreateArticle createArticle,
+                                FindArticle findArticle,
+                                UpdateTags updateTags) {
 
-    public ArticleController(CreateArticle createArticle, FindArticle findArticle, UpdateTags updateTags) {
-        this.createArticle = createArticle;
-        this.findArticle = findArticle;
-        this.updateTags = updateTags;
+    public ArticleController {
+        Objects.requireNonNull(createArticle);
+        Objects.requireNonNull(findArticle);
+        Objects.requireNonNull(updateTags);
     }
 
     public Optional<ArticleWeb> getArticle(String articleId) {
@@ -51,7 +51,7 @@ public class ArticleController {
             throw new ArticleValidationException("Invalid date", e);
         }
     }
-    
+
     public Optional<ArticleWeb> addTags(@NotNull String articleId, @NotNull List<String> tags) {
         return updateTags.addTags(articleId, tags).map(ArticleWeb::toArticleWeb);
     }

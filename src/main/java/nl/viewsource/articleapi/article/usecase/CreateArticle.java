@@ -6,11 +6,16 @@ import nl.viewsource.articleapi.article.entity.ArticleValidator;
 import nl.viewsource.articleapi.article.usecase.port.ArticleRepository;
 import nl.viewsource.articleapi.article.usecase.port.IdGenerator;
 
+import java.util.Objects;
 import java.util.Optional;
 
-public record CreateArticle(ArticleRepository repository,
-                            IdGenerator idGenerator,
-                            ArticleValidator articleValidator) {
+public record CreateArticle(ArticleRepository articleRepository, IdGenerator idGenerator, ArticleValidator articleValidator) {
+
+    public CreateArticle {
+        Objects.requireNonNull(articleRepository);
+        Objects.requireNonNull(idGenerator);
+        Objects.requireNonNull(articleValidator);
+    }
 
     public Article create(final Article article) throws ArticleValidationException {
         var articleToSave = Article.builder(article)
@@ -19,11 +24,11 @@ public record CreateArticle(ArticleRepository repository,
 
         articleValidator.validate(articleToSave);
 
-        return repository.create(articleToSave);
+        return articleRepository.create(articleToSave);
     }
 
     public Optional<Article> update(String articleId, final Article article) throws ArticleValidationException {
-        var optionalArticle = repository.findById(articleId);
+        var optionalArticle = articleRepository.findById(articleId);
 
         if (optionalArticle.isEmpty()) {
             return optionalArticle;
@@ -34,6 +39,6 @@ public record CreateArticle(ArticleRepository repository,
 
         articleValidator.validate(articleToSave);
 
-        return Optional.of(repository.replace(articleToSave));
+        return Optional.of(articleRepository.replace(articleToSave));
     }
 }
