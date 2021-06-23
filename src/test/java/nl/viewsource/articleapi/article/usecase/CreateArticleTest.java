@@ -40,14 +40,13 @@ class CreateArticleTest {
 
     @Nested
     @DisplayName("When creating an instance of the usecase")
-
     class WhenCreateNewCreateArticle {
         @Test()
         @DisplayName("requires ArticleRepository")
         void new_requiresArticleRepository() {
             assertThrows(
                     NullPointerException.class,
-                    () -> createArticle = new CreateArticle(null, idGenerator, articleValidator)
+                    () -> new CreateArticle(null, idGenerator, articleValidator)
             );
         }
 
@@ -56,7 +55,7 @@ class CreateArticleTest {
         void new_requiresIdGenerator() {
             assertThrows(
                     NullPointerException.class,
-                    () -> createArticle = new CreateArticle(articleRepository, null, articleValidator)
+                    () -> new CreateArticle(articleRepository, null, articleValidator)
             );
         }
 
@@ -65,7 +64,7 @@ class CreateArticleTest {
         void new_requiresArticleValidator() {
             assertThrows(
                     NullPointerException.class,
-                    () -> createArticle = new CreateArticle(articleRepository, idGenerator, null)
+                    () -> new CreateArticle(articleRepository, idGenerator, null)
             );
         }
     }
